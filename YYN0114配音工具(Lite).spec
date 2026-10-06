@@ -14,6 +14,9 @@ _SDIR = os.path.join(SPECPATH, 'scripts')
 for _n in ('dub_itts.py', 'dub_gpt.py', 'tts_resident.py', 'sound-askuser.wav'):
     datas.append((os.path.join(_SDIR, _n), 'dub_scripts'))
 
+# 窗口图标：运行期由 gui.py 的 iconbitmap 读取（exe 里的图标资源只管资源管理器）
+datas.append((os.path.join(SPECPATH, 'assets', 'icon.ico'), 'assets'))
+
 
 a = Analysis(
     [os.path.join(SPECPATH, 'gui.py')],

@@ -1891,8 +1891,85 @@ class App:
         self.root.destroy()
 
 
+# icon.ico 里实际写入的尺寸（由 Pillow 一次性生成）
+_ICON_SIZES = (16, 24, 32, 48, 64, 128, 256)
+
+
+def _apply_window_icon(root) -> None:
+    """把标题栏 / 任务栏 / 所有子窗口的图标换成本软件图标。
+
+    exe 里的图标资源只管资源管理器那一栏；Tk 窗口默认仍是自带羽毛图标，
+    得运行时再调一次 iconbitmap；default=True 对之后新建的 Toplevel 同样生效。
+    """
+    base = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent))
+    ico = base / "assets" / "icon.ico"
+    if not ico.exists():
+        return
+    try:
+        root.iconbitmap(default=str(ico))
+    except Exception:
+        pass
+    _sharpen_window_icon(root, ico)
+
+
+def _sharpen_window_icon(root, ico: Path) -> None:
+    """换掉 Tk 那张被重采样过的 HICON，救回任务栏 / Alt-Tab 的清晰度。
+
+    Tk 走完 iconbitmap 后，窗口手里那张 HICON 跟 ico 里的原图逐像素对不上
+    （实测平均差 32），在任务栏上就是糊的。这里自己用 LoadImage 取 ico 里
+    尺寸正好对应的那一张，再 WM_SETICON 塞回去。
+    """
+    if sys.platform != "win32":
+        return
+    try:
+        import ctypes
+        from ctypes import wintypes
+
+        user32 = ctypes.WinDLL("user32", use_last_error=True)
+        root.update_idletasks()
+        frame = root.wm_frame()
+        hwnd = int(frame, 16) if frame.lower().startswith("0x") else int(frame)
+        if not hwnd:
+            return
+
+        # 真实 DPI：GetDpiForMonitor 不受本进程 DPI 感知级别影响
+        dpi = 96
+        try:
+            shcore = ctypes.WinDLL("shcore", use_last_error=True)
+            user32.MonitorFromWindow.restype = wintypes.HANDLE
+            hmon = user32.MonitorFromWindow(wintypes.HWND(hwnd), 2)
+            dx, dy = wintypes.UINT(), wintypes.UINT()
+            if shcore.GetDpiForMonitor(wintypes.HANDLE(hmon), 0,
+                                       ctypes.byref(dx), ctypes.byref(dy)) == 0:
+                dpi = dx.value or 96
+        except Exception:
+            pass
+
+        def pick(need: int) -> int:
+            """取 ico 里第一个不小于 need 的尺寸，保证拿到的就是原图而不是缩放图。"""
+            for s in _ICON_SIZES:
+                if s >= need:
+                    return s
+            return _ICON_SIZES[-1]
+
+        IMAGE_ICON, LR_LOADFROMFILE, WM_SETICON = 1, 0x0010, 0x0080
+        user32.LoadImageW.restype = wintypes.HANDLE
+        user32.LoadImageW.argtypes = [wintypes.HINSTANCE, wintypes.LPCWSTR, wintypes.UINT,
+                                      ctypes.c_int, ctypes.c_int, wintypes.UINT]
+        user32.SendMessageW.argtypes = [wintypes.HWND, wintypes.UINT,
+                                        wintypes.WPARAM, wintypes.LPARAM]
+        for idx, base_px in ((0, 16), (1, 32)):      # 0=ICON_SMALL(标题栏) 1=ICON_BIG(任务栏)
+            size = pick(max(1, base_px * dpi // 96))
+            hicon = user32.LoadImageW(None, str(ico), IMAGE_ICON, size, size, LR_LOADFROMFILE)
+            if hicon:
+                user32.SendMessageW(wintypes.HWND(hwnd), WM_SETICON, idx, hicon)
+    except Exception:
+        pass
+
+
 def main():
     root = TkinterDnD.Tk() if HAS_DND else tk.Tk()
+    _apply_window_icon(root)
     App(root)
     root.mainloop()
 
