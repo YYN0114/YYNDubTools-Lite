@@ -32,5 +32,5 @@ jobs:
       - name: 上传 EXE
         uses: actions/upload-artifact@v4
         with:
-          name: myapp-windows
-          path: dist/myapp.exe
+          name: YYNDubTools-Lite-windows
+          path: dist/YYNDubTools-Lite.exe
