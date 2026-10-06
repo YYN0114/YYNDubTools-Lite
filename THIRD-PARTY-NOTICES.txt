@@ -1,0 +1,42 @@
+YYN0114配音工具(Lite) — 第三方组件许可声明
+=========================================================
+
+本软件的 exe 由 PyInstaller 打包，运行时用到以下第三方组件。
+各组件版权归其各自作者所有，遵循其原始许可（凡要求保留声明的，均列于此处）。
+以下内嵌组件的许可均与本软件所选 GNU GPL v3 兼容，可随本软件一并分发。
+
+1) Python 运行时
+   许可：Python Software Foundation License (PSF-2.0)
+   版权：Copyright © Python Software Foundation
+   许可全文：https://docs.python.org/3/license.html
+
+2) Tcl/Tk（tkinter 界面库）
+   许可：BSD 风格许可
+   版权：Copyright © Tcl/Tk contributors
+   许可全文：https://www.tcl.tk/software/tcltk/license.html
+
+3) tkinterdnd2（拖放支持；含其自带的 TkDnD 扩展，随 exe 分发）
+   许可：MIT License
+   版权：Copyright © tkinterdnd2 / TkDnD contributors
+   许可全文：https://github.com/pmgagne/tkinterdnd2/blob/master/LICENSE
+
+4) PyInstaller（打包工具；其 bootloader 会被嵌入 exe）
+   许可：GPL-2.0-or-later，附带 Bootloader Exception ——
+         用它打包自己的程序不受 GPL 传染，产物可自由分发。
+   版权：Copyright © PyInstaller contributors
+   许可全文：https://github.com/pyinstaller/pyinstaller/blob/develop/COPYING.txt
+
+5) sound-askuser.wav（批次结束提示音；随 exe 分发）
+   许可：CC0 1.0 Universal（公共领域奉献）
+   来源：本软件作者提供并声明为 CC0，可自由使用、修改、再分发。
+   许可全文：https://creativecommons.org/publicdomain/zero/1.0/
+
+以下组件不随本软件分发，需使用者自行安装并单独遵守其许可，
+本软件仅通过命令行参数引用其安装路径，未捆绑其任何文件：
+
+   · IndexTTS 2.5 — Apache License 2.0
+     https://github.com/index-tts/index-tts
+   · GPT-SoVITS   — MIT License
+     https://github.com/RVC-Boss/GPT-SoVITS
+   · ffmpeg       — LGPL / GPL（取决于编译配置，需自行下载）
+     https://ffmpeg.org/legal.html
