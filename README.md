@@ -1,6 +1,6 @@
-<img src="assets/icon.png" alt="YYNDubTools" width="150">
+<img src="assets/icon.png" alt="YYNDubTools-Lite" width="150">
 
-# YYNDubTools · YYN0114配音工具(Lite)
+# YYNDubTools-Lite · YYN0114配音工具(Lite)
 
 > 字幕与配音的批处理工具：**sub_zh.csv → 台本 srt → 配音 → OGG**。
 > A local, offline batch toolkit for subtitles & dubbing.
@@ -11,7 +11,7 @@
 
 ## 简介
 
-把台词表（`sub_zh.csv`）批量拆成字幕，再逐句克隆配音成整轨音频，最后转 OGG —— 全流程在**本地**完成，
+可一体化输入(包括拆解游戏自带字幕文件)，并逐句克隆配音成整轨音频、转 OGG —— 全流程在**本地**完成，
 不联网、不上传。**单文件 exe**，放到任意位置即可运行。
 
 - **字幕线**：csv 拆分 / 汉化 / 去括号 / 去标号 / 词表替换 / 查错 / 导出VO文本 / 查找缺失 / 提取未译
@@ -20,11 +20,10 @@
 - **批量**：常驻 TTS 服务（模型只加载一次）、对照表批量配音、状态指示灯、紧急中止
 - **提醒**：批次结束 → 本机提示音 + 手机 ntfy 推送
 
-## 来历
+## 初衷
 
-本工具**最初是为《严阵以待》(Ready or Not) 的中文汉化 Mod「中文与否 / Chinese Or Not」开发、设计的**。
-该 Mod 的目标是把游戏内的**贴图、文字、剧情、语音**全面汉化；其中「语音」部分要把上千句台词逐句克隆成
-中文配音、再回填时间轴，纯手工无法完成 —— 这个工具就是为它而生的。
+本工具**最初是为Ready or Not的一个汉化配音开发**。
+故许多功能、设置对此高度优化
 
 - **Mod 主页（Nexus Mods）**：<https://www.nexusmods.com/readyornot/mods/7675>
 - **Mod 名称**：Chinese Or Not（中文与否）　**作者**：YYN0114
@@ -90,7 +89,7 @@
 
 ## English overview
 
-**YYNDubTools** (YYN0114 Dubbing Toolkit, Lite) is a **local, offline batch toolkit** for subtitles and dubbing on Windows.
+**YYNDubTools-Lite** (YYN0114 Dubbing Toolkit) is a **local, offline batch toolkit** for subtitles and dubbing on Windows.
 It turns a dialogue table (`sub_zh.csv`) into per-line SRTs, synthesizes cloned speech line by line into a
 single audio track, and converts the result to OGG — everything runs on your own machine.
 

@@ -37,6 +37,7 @@ exe = EXE(
     a.datas,
     [],
     name="YYN0114配音工具(Lite)",
+    icon=os.path.join(SPECPATH, 'assets', 'icon.ico'),
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
