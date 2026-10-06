@@ -1,0 +1,37 @@
+name: Build EXE
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:       # 允许你手动点击按钮触发
+
+jobs:
+  build:
+    runs-on: windows-latest   # 必须是 Windows，因为要打包 exe
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安装依赖和 PyInstaller
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          # 如果你有 requirements.txt，取消下面这行的注释
+          # pip install -r requirements.txt
+
+      - name: 打包 EXE
+        run: |
+          # 把 main.py 换成你自己的入口文件名
+          pyinstaller --onefile --name myapp main.py
+
+      - name: 上传 EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: myapp-windows
+          path: dist/myapp.exe
