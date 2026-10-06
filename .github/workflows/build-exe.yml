@@ -3,11 +3,29 @@ name: Build EXE
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:       # 允许你手动点击按钮触发
+    tags: [ 'v*' ]            # 打 tag 时顺便发 Release；不用可删
+    paths-ignore:             # 只改文档不触发（tag 不受此限）
+      - '**.md'
+      - 'LICENSE'
+      - 'NOTICE'
+      - 'THIRD-PARTY-NOTICES.txt'
+      - '.gitignore'
+  workflow_dispatch:          # 允许手动点按钮触发
+
+permissions:
+  contents: read              # 最小权限
+
+concurrency:                  # 连推两次 → 自动取消旧的那次
+  group: build-exe-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHONUTF8: '1'             # 关键：让中文 spec 名 / 路径不出乱码
+  PYTHONIOENCODING: 'utf-8'
 
 jobs:
   build:
-    runs-on: windows-latest   # 必须是 Windows，因为要打包 exe
+    runs-on: windows-latest
 
     steps:
       - name: 检出代码
@@ -18,19 +36,47 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: 安装依赖和 PyInstaller
+      - name: 安装依赖
         run: |
           python -m pip install --upgrade pip
-          pip install pyinstaller
-          # 如果你有 requirements.txt，取消下面这行的注释
-          # pip install -r requirements.txt
+          python -m pip install "pyinstaller==6.22.3" tkinterdnd2
 
-      - name: 打包 EXE
+      - name: 打包 EXE（走 spec，保证图标/脚本/资源都进包）
+        run: python -m PyInstaller --noconfirm --clean "YYN0114配音工具(Lite).spec"
+
+      - name: 校验产物
+        shell: pwsh
         run: |
-          pyinstaller --onefile --name YYNDubTools-Lite gui.py
+          $exe = "dist\YYN0114配音工具(Lite).exe"
+          if (-not (Test-Path $exe)) { throw "打包失败：找不到 $exe" }
+          Write-Host ("产物 {0}（{1} MB）" -f $exe, [math]::Round((Get-Item $exe).Length/1MB, 2))
+          Copy-Item $exe "dist\YYNDubTools-Lite.exe" -Force   # 复制一份纯 ASCII 名，方便下载
 
       - name: 上传 EXE
         uses: actions/upload-artifact@v4
         with:
           name: YYNDubTools-Lite-windows
-          path: dist/YYNDubTools-Lite.exe
+          path: |
+            dist/YYN0114配音工具(Lite).exe
+            dist/YYNDubTools-Lite.exe
+          if-no-files-found: error
+
+  # ↓ 仅打 tag 时执行；不需要就整段删掉
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: YYNDubTools-Lite-windows
+          path: dist
+      - name: 发布 Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            dist/YYNDubTools-Lite.exe \
+            --title "${{ github.ref_name }}" --generate-notes
