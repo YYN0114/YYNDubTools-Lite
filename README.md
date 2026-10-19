@@ -61,7 +61,7 @@
 ⑤ 成品在 工作区\output\dub\{wav,ogg}\<角色名>\
 ```
 
-完整操作见 **[使用说明.md](使用说明.md)（中文）** 或 **[User Manual (EN)](使用说明-EN.md)**。
+完整操作见 **[使用说明.md](使用说明.md)**。
 
 ## 目录与产物
 
@@ -108,21 +108,97 @@
 It turns a dialogue table (`sub_zh.csv`) into per-line SRTs, synthesizes cloned speech line by line into a
 single audio track, and converts the result to OGG — everything runs on your own machine.
 
-- **Subtitles**: CSV split, apply Chinese, strip parentheses, strip line numbers, dictionary replace,
-  content check, export VO text, find missing, extract untranslated.
-- **Dubbing**: IndexTTS 2.5 and GPT-SoVITS v2Pro backends; per-line voice cloning with emotion control
-  (same-name reference audio, or an 8-dimension emotion vector).
-- **Batch**: a resident TTS service (load the model once), comparison-table batch dubbing, a status LED,
-  emergency abort, and end-of-batch alerts (local sound + phone push via ntfy).
+### Introduction
 
-**Requirements**: Windows 10/11 (64-bit), a GPU with ~8 GB VRAM recommended, IndexTTS 2.5 (or GPT-SoVITS)
-installed locally, and ffmpeg for OGG output. Model weights and ffmpeg are **not bundled**.
+It takes the whole pipeline in one place (including splitting the subtitle files a game ships with),
+clone-dubs the dialogue line by line into a full audio track, and converts it to OGG — all done **locally**,
+with no network access and no uploads. **A single-file exe** that runs from wherever you put it.
 
-**Origin**: this tool was originally built for the *Ready or Not* Chinese localization mod
-[**Chinese Or Not**](https://www.nexusmods.com/readyornot/mods/7675) by YYN0114 — its per-line voice
-dubbing pipeline is what the tool was designed for. It later became a general-purpose toolkit.
+- **Subtitles**: CSV split / apply Chinese / strip parentheses / strip line numbers / dictionary replace /
+  content check / export VO text / find missing / extract untranslated
+- **Dubbing**: IndexTTS 2.5 (Apache-2.0) and GPT-SoVITS v2Pro (MIT) backends; per-line cloning + emotion control
+- **Emotion**: use the "same-name original audio" as an emotion reference, or an 8-dimension emotion vector
+  (happy / angry / sad / fear / disgust / down / surprise / neutral)
+- **Batch**: a resident TTS service (the model is loaded once), comparison-table batch dubbing, a status LED, emergency abort
+- **Alerts**: end of a batch → local chime + phone push via ntfy
 
-**License**: GNU GPL v3 or any later version. See [LICENSE](LICENSE).
-**Third-party notices**: [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt).
-**Manual**: [User Manual (EN)](使用说明-EN.md) · [使用说明（中文）](使用说明.md).
-**Other docs**: [Rust edition manual](Rust版使用手册-EN.md) (EN) · [feature comparison](版本功能对照表-EN.md) (EN) · [setup manual](操作手册-EN.md) (EN) · [download checklist](需要你下载-EN.md) (EN).
+### Origin
+
+This tool was **originally built for a Chinese dubbing mod of *Ready or Not***, so many features and
+settings are heavily optimized for it.
+
+- **Mod page (Nexus Mods)**: <https://www.nexusmods.com/readyornot/mods/7675>
+- **Mod name**: Chinese Or Not　**Author**: YYN0114
+- **Author's Bilibili**: <https://space.bilibili.com/1800421262>
+
+Once the dubbing pipeline worked, the tool was extracted into a general-purpose edition: subtitle
+processing, emotion control and batch dubbing can all be used independently of that mod.
+
+### Requirements
+
+| Item | Requirement |
+| --- | --- |
+| OS | Windows 10 / 11 (64-bit) |
+| GPU | 8 GB VRAM recommended (for local IndexTTS inference) |
+| Dubbing backend | IndexTTS 2.5 model root (containing `checkpoints\`); GPT-SoVITS optional |
+| Audio conversion | ffmpeg.exe (wav → ogg) |
+
+> Third-party components such as model weights and ffmpeg are **not distributed with this software**;
+> install them yourself.
+
+### Install / run
+
+1. Download `YYN0114配音工具(Lite).exe` and put it in any directory.
+2. Double-click to run. On first launch every directory is empty and it prompts you to set "Workspace dir".
+3. After "Workspace dir" is set, its 7 sub-paths are auto-derived and created:
+   `source` / `srt` / `voices` / `output` / `votxt` / `dict.txt` / `ffmpeg\ffmpeg.exe`.
+4. "Directory settings" has **Simple mode** checked by default, showing only "Workspace dir + TTS paths";
+   uncheck it to see every address field.
+
+The config is stored in `%APPDATA%\YYNTools\config_lite.json`; delete that file to reset to the initial state.
+
+### Quick start
+
+```
+1. Directory settings → Workspace dir = where you want all output
+2. Click "ZH csv split (ZH 的 csv 拆分)"   → you get SRTs
+3. In Dubbing, fill: Dubbing folder / IndexTTS root (Voice dir and ffmpeg.exe are auto-derived from the workspace)
+4. Model = IndexTTS 2.5 → pick a voice → click "Start (开始)"
+5. Output lands in <workspace>\output\dub\{wav,ogg}\<role name>\
+```
+
+Full instructions: **[User Manual](使用说明-EN.md)**.
+
+### Directories and output
+
+| Output | Location |
+| --- | --- |
+| Split subtitle SRTs | `<output dir>\<source folder name>\*.srt` |
+| Script (台本) SRTs | `<output path>\script\<role name>\` |
+| Dubbed srt / wav / ogg | `<output path>\dub\{srt,wav,ogg}\<role name>\` |
+| Exported VO text | `<workspace>\votxt\` |
+
+### Documentation
+
+| Document | Applies to |
+| --- | --- |
+| [User Manual](使用说明-EN.md) | Lite (this repository) |
+| [Rust edition manual](Rust版使用手册-EN.md) | Y's Batch Toolkit, Rust edition v1.2.1 (Advanced / Developer) |
+| [Feature comparison](版本功能对照表-EN.md) | Lite / Advanced / Developer |
+| [Setup manual](操作手册-EN.md) | Local AI localization environment (ComfyUI + IndexTTS / image localization) |
+| [Model download checklist](需要你下载-EN.md) | Model download and placement |
+
+### License
+
+This software is released under the **GNU GPL v3 or any later version (GPL-3.0-or-later)** as free software:
+you may freely use, modify and redistribute it; **derivative works must also be released under the GPL**;
+it is provided "as is", **without any warranty**.
+The full license text is in the bundled [LICENSE](LICENSE), or see <https://www.gnu.org/licenses/gpl-3.0.html>.
+
+### Third-party components
+
+- **Embedded in the exe (shipped with the package)**: Python runtime (PSF-2.0), Tcl/Tk (BSD-style), tkinterdnd2 (MIT),
+  PyInstaller bootloader (GPL-2.0 + Bootloader exception).
+- **Not shipped — install yourself**: IndexTTS 2.5 (Apache-2.0), GPT-SoVITS (MIT), ffmpeg (LGPL/GPL).
+
+See [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt) for details.
