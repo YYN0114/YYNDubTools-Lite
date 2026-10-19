@@ -61,7 +61,7 @@
 ⑤ 成品在 工作区\output\dub\{wav,ogg}\<角色名>\
 ```
 
-完整操作见 **[使用说明.md](使用说明.md)**。
+完整操作见 **[使用说明.md](使用说明.md)（中文）** 或 **[User Manual (EN)](使用说明-EN.md)**。
 
 ## 目录与产物
 
@@ -71,6 +71,21 @@
 | 台本 srt | `输出路径\script\<角色名>\` |
 | 配音 srt / wav / ogg | `输出路径\dub\{srt,wav,ogg}\<角色名>\` |
 | 导出VO文本 | `工作区目录\votxt\` |
+
+## 文档
+
+| 文档 | 语言 | 适用版本 |
+| --- | --- | --- |
+| [使用说明.md](使用说明.md) | 中文 | Lite（本仓库） |
+| [使用说明-EN.md](使用说明-EN.md) | English | Lite (this repository) |
+| [Rust版使用手册.md](Rust版使用手册.md) | 中文 | Y's批处理工具 Rust 版 v1.2.1（高级 / 开发者） |
+| [Rust版使用手册-EN.md](Rust版使用手册-EN.md) | English | Rust edition v1.2.1 (Advanced / Developer) |
+| [版本功能对照表.md](版本功能对照表.md) | 中文 | Lite / 高级 / 开发者 三版本对照 |
+| [版本功能对照表-EN.md](版本功能对照表-EN.md) | English | Lite / Advanced / Developer comparison |
+| [操作手册.md](操作手册.md) | 中文 | 本地 AI 汉化环境（ComfyUI + IndexTTS / 图片汉化） |
+| [操作手册-EN.md](操作手册-EN.md) | English | Local AI localization environment |
+| [需要你下载.md](需要你下载.md) | 中文 | 模型下载与归位清单 |
+| [需要你下载-EN.md](需要你下载-EN.md) | English | Model download checklist |
 
 ## 许可
 
@@ -109,4 +124,5 @@ dubbing pipeline is what the tool was designed for. It later became a general-pu
 
 **License**: GNU GPL v3 or any later version. See [LICENSE](LICENSE).
 **Third-party notices**: [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt).
-**Full manual (Chinese)**: [使用说明.md](使用说明.md).
+**Manual**: [User Manual (EN)](使用说明-EN.md) · [使用说明（中文）](使用说明.md).
+**Other docs**: [Rust edition manual](Rust版使用手册-EN.md) (EN) · [feature comparison](版本功能对照表-EN.md) (EN) · [setup manual](操作手册-EN.md) (EN) · [download checklist](需要你下载-EN.md) (EN).
